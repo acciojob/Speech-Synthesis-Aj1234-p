@@ -34,7 +34,7 @@ synth.addEventListener("voiceschanged", (event) => {
 pitch.addEventListener("input", (event) => {
   setPitchValue = event.target.value;
   console.log(setPitchValue)
-  if(hasSpeechStarted){
+  if(synth.speaking){
     speakText();
   }
 });
@@ -42,13 +42,13 @@ pitch.addEventListener("input", (event) => {
 rate.addEventListener("input", (event) => {
   setRateValue = event.target.value;
   console.log(setRateValue);
-  if(hasSpeechStarted)
+  if(synth.speaking)
   speakText();
 });
 
 voicesDropdown.addEventListener('input',(event)=>{
   console.log("voice dropdown ",event.target);
-  if(hasSpeechStarted)
+  if(hasSpeechStarte)
   speakText();
 })
 
