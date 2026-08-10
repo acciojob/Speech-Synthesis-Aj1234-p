@@ -8,8 +8,8 @@ const userText = document.querySelector("#userText");
 const rate = document.querySelector('[name="rate"]');
 const pitch = document.querySelector('[name="pitch"]');
 const selectedVoice = document.querySelector("#voices");
-const synth = window.speechSynthesis;
 let setPitchValue = 1,setRateValue = 1,userSelectVoice = "";
+const synth = window.speechSynthesis;
 
 synth.addEventListener("voiceschanged", (event) => {
   const voiceList = synth.getVoices();
