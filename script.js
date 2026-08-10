@@ -8,7 +8,8 @@ const rate = document.querySelector('[name="rate"]');
 const pitch = document.querySelector('[name="pitch"]');
 const errorMessage = document.querySelector('.error-msg');
 const synth = window.speechSynthesis;
-let setPitchValue = 1,setRateValue = 1,userSelectVoice = "", isPitchChange = false, isRateChange = false, isStopThis = false;
+let setPitchValue = 1,setRateValue = 1,userSelectVoice = "";
+let isPitchChange = false, isRateChange = false, isStopThis = false, hasSpeechStarted = false;
 
 synth.addEventListener("voiceschanged", (event) => {
   const voiceList = synth.getVoices();
@@ -33,7 +34,7 @@ synth.addEventListener("voiceschanged", (event) => {
 pitch.addEventListener("input", (event) => {
   setPitchValue = event.target.value;
   console.log(setPitchValue)
-  if(isPitchChange){
+  if(hasSpeechStarted){
     speakText();
   }
 });
@@ -41,22 +42,20 @@ pitch.addEventListener("input", (event) => {
 rate.addEventListener("input", (event) => {
   setRateValue = event.target.value;
   console.log(setRateValue);
-  if(isRateChange)
+  if(hasSpeechStarted)
   speakText();
 });
 
 voicesDropdown.addEventListener('input',(event)=>{
   console.log("voice dropdown ",event.target);
-  if(isStopThis)
+  if(hasSpeechStarted)
   speakText();
 })
 
 
 function speakText(){
-  if(isStopThis){
     synth.cancel();
-    console.log("First stop the previous voice then start a new voice speech");
-  }
+    hasSpeechStarted = true;
   if(userText.value===" "){
     let p = document.createElement('p');
     p.textContent = "Put the text before speech to text";
@@ -64,26 +63,14 @@ function speakText(){
     return;
   }
   let msg = new SpeechSynthesisUtterance(userText.value);
-  if(isPitchChange){
-    console.log("updated pitch value ",setPitchValue);
-    msg.pitch = setPitchValue;
-    // return;
-  }
-  if(isRateChange){
-    console.log("updated rate value ",setRateValue);
-    msg.rate = setRateValue;
-    // return;
-  }
- 
   msg.rate = setRateValue;
   msg.pitch = setPitchValue;
-  isStopThis = true;
-  isPitchChange = true;
-  isRateChange = true;
+
   console.log("Set rate value ",setRateValue);
   let vList = synth.getVoices();
   console.log("voice dropdown ",voicesDropdown);
-  const selectedOption = voicesDropdown.selectedOptions[0].getAttribute("data-name");
+  // const selectedOption = voicesDropdown.selectedOptions[0].getAttribute("data-name");
+  const selectedOption = voicesDropdown.value;
   console.log("Selected option ",selectedOption);
   if(selectedOption===null) {
    let p = document.createElement('p');
@@ -101,7 +88,7 @@ function speakText(){
   }
   msg.onstart=() =>console.log("speech started");
   msg.onend = ()=>console.log("speech end");
-  msg.onerror =()=>console.log("speech error");
+  msg.onerror =(e)=>console.log("speech error",e.error);
   synth.speak(msg);
 }
 
