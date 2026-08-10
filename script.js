@@ -45,7 +45,11 @@ rate.addEventListener("input", (event) => {
 });
 
 speakButton.addEventListener("click", (event) => {
-  if(userText.value.trim()===""){
+    if (!userText) {
+    console.log("Text input element not found");
+    return; // stop here instead of crashing
+  }
+   if(userText.value.trim()===""){
     let p = document.createElement('p');
     p.textContent = "Put the text before speech to text";
     errorMessage.appendChild(p);
