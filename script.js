@@ -86,6 +86,5 @@ speakButton.addEventListener("click", (event) => {
 stopButton.addEventListener("click", (event) => {
   console.log("stop button ", event.target.textContent);
   synth.cancel();
-  synth.pause();
 });
 
