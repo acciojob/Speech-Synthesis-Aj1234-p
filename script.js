@@ -6,10 +6,9 @@ const stopButton = document.querySelector("#stop");
 const userText = document.querySelector("#userText");
 const rate = document.querySelector('[name="rate"]');
 const pitch = document.querySelector('[name="pitch"]');
-// const selectedVoice = document.querySelector("#voices");
 const errorMessage = document.querySelector('.error-msg');
 const synth = window.speechSynthesis;
-let setPitchValue = 1,setRateValue = 1,userSelectVoice = "";
+let setPitchValue = 1,setRateValue = 1,userSelectVoice = "", isPitchChange = false, isRateChange = false, isStopThis = false;
 
 synth.addEventListener("voiceschanged", (event) => {
   const voiceList = synth.getVoices();
@@ -31,37 +30,60 @@ synth.addEventListener("voiceschanged", (event) => {
 });
 
 
-// selectedVoice.addEventListener("input", (event) => {
-//   userSelectVoice = event.target.value;
-//   console.log(event.target.getAttribute("data-name"));
-// });
-
-pitch.addEventListener("change", (event) => {
+pitch.addEventListener("input", (event) => {
   setPitchValue = event.target.value;
+  console.log(setPitchValue)
+  if(isPitchChange){
+    speakText();
+  }
 });
 
 rate.addEventListener("input", (event) => {
   setRateValue = event.target.value;
+  console.log(setRateValue);
+  if(isRateChange)
+  speakText();
 });
 
-speakButton.addEventListener("click", (event) => {
-    if (!userText) {
-    console.log("Text input element not found");
-    return; // stop here instead of crashing
+voicesDropdown.addEventListener('input',(event)=>{
+  console.log("voice dropdown ",event.target);
+  if(isStopThis)
+  speakText();
+})
+
+
+function speakText(){
+  if(isStopThis){
+    synth.cancel();
+    console.log("First stop the previous voice then start a new voice speech");
   }
-   if(userText.value.trim()===""){
+  if(userText.value===" "){
     let p = document.createElement('p');
     p.textContent = "Put the text before speech to text";
     errorMessage.appendChild(p);
     return;
   }
-  const msg = new SpeechSynthesisUtterance(userText.value);
+  let msg = new SpeechSynthesisUtterance(userText.value);
+  if(isPitchChange){
+    console.log("updated pitch value ",setPitchValue);
+    msg.pitch = setPitchValue;
+    // return;
+  }
+  if(isRateChange){
+    console.log("updated rate value ",setRateValue);
+    msg.rate = setRateValue;
+    // return;
+  }
+ 
   msg.rate = setRateValue;
   msg.pitch = setPitchValue;
+  isStopThis = true;
+  isPitchChange = true;
+  isRateChange = true;
+  console.log("Set rate value ",setRateValue);
   let vList = synth.getVoices();
-  console.log("voice dropdown ",voicesDropdown)
-  // const selectedOption = document.querySelector("select").selectedOptions[0].getAttribute("data-name");
-  const selectedOption = voicesDropdown.selectedOptions[0]?.getAttribute("data-name");
+  console.log("voice dropdown ",voicesDropdown);
+  const selectedOption = voicesDropdown.selectedOptions[0].getAttribute("data-name");
   console.log("Selected option ",selectedOption);
   if(selectedOption===null) {
    let p = document.createElement('p');
@@ -81,7 +103,10 @@ speakButton.addEventListener("click", (event) => {
   msg.onend = ()=>console.log("speech end");
   msg.onerror =()=>console.log("speech error");
   synth.speak(msg);
-});
+}
+
+
+speakButton.addEventListener("click", speakText);
 
 stopButton.addEventListener("click", (event) => {
   console.log("stop button ", event.target.textContent);
