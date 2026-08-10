@@ -80,12 +80,12 @@ speakButton.addEventListener("click", (event) => {
   msg.onstart=() =>console.log("speech started");
   msg.onend = ()=>console.log("speech end");
   msg.onerror =()=>console.log("speech error");
-  synth.cancel();
   synth.speak(msg);
 });
 
 stopButton.addEventListener("click", (event) => {
   console.log("stop button ", event.target.textContent);
+  synth.cancel();
   synth.pause();
 });
 
